@@ -3,7 +3,7 @@
   "datasets": [
     {
       "id": "cough_breath",
-      "path": "/iridisfs/scratch/mtm1g19/audioldm_project/fine_proj/AudioLDM-training-finetuning/data/dataset/my_data",
+      "path": "dataset/my_data",
       "class_dirs": true
     }
   ],
