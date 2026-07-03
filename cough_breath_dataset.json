@@ -1,0 +1,15 @@
+{
+  "dataset_type": "audio_dir",
+  "datasets": [
+    {
+      "id": "cough_breath",
+      "path": "/iridisfs/scratch/mtm1g19/audioldm_project/fine_proj/AudioLDM-training-finetuning/data/dataset/my_data",
+      "class_dirs": true
+    }
+  ],
+
+  "random_crop": true,
+  "sample_rate": 44100,
+  "sample_size": 441000,
+  "text_prompt_template": "A recording of a {class_label}"
+}

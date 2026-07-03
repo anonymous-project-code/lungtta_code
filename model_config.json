@@ -1,0 +1,139 @@
+{
+  "model_type": "diffusion_cond",
+  "sample_size": 262144,
+  "sample_rate": 44100,
+  "audio_channels": 2,
+  "model": {
+    "pretransform": {
+      "type": "autoencoder",
+      "iterate_batch": true,
+      "config": {
+        "encoder": {
+          "type": "oobleck",
+          "requires_grad": false,
+          "config": {
+            "in_channels": 2,
+            "channels": 128,
+            "c_mults": [1, 2, 4, 8, 16],
+            "strides": [2, 4, 4, 8, 8],
+            "latent_dim": 128,
+            "use_snake": true
+          }
+        },
+        "decoder": {
+          "type": "oobleck",
+          "config": {
+            "out_channels": 2,
+            "channels": 128,
+            "c_mults": [1, 2, 4, 8, 16],
+            "strides": [2, 4, 4, 8, 8],
+            "latent_dim": 64,
+            "use_snake": true,
+            "final_tanh": false
+          }
+        },
+        "bottleneck": { "type": "vae" },
+        "latent_dim": 64,
+        "downsampling_ratio": 2048,
+        "io_channels": 2
+      }
+    },
+    "conditioning": {
+      "configs": [
+        {
+          "id": "prompt",
+          "type": "t5",
+          "config": { "t5_model_name": "t5-base", "max_length": 128 }
+        },
+        {
+          "id": "seconds_start",
+          "type": "number",
+          "config": { "min_val": 0, "max_val": 512 }
+        },
+        {
+          "id": "seconds_total",
+          "type": "number",
+          "config": { "min_val": 0, "max_val": 512 }
+        }
+      ],
+      "cond_dim": 768
+    },
+
+    "memory": {
+      "enabled": true,
+      "bank_path": "/iridisfs/scratch/mtm1g19/audioscratch/encoded/memory_bank.pt",
+      "top_k": 4,
+      "dropout": 0.2,
+      "query_cond_id": "prompt"
+    },
+
+    "diffusion": {
+      "cross_attention_cond_ids": ["prompt", "seconds_start", "seconds_total", "memory"],
+      "global_cond_ids": ["seconds_start", "seconds_total"],
+      "type": "dit",
+      "config": {
+        "io_channels": 64,
+        "embed_dim": 1536,
+        "depth": 24,
+        "num_heads": 24,
+        "cond_token_dim": 768,
+        "global_cond_dim": 1536,
+        "project_cond_tokens": false,
+        "transformer_type": "continuous_transformer",
+
+        "gating": { "enabled": true, "mode": "sigmoid", "init": 0.0 },
+        "se": { "enabled": false }
+
+      }
+    },
+    "io_channels": 64
+  },
+
+  "training": {
+    "use_ema": false,
+    "log_loss_info": false,
+
+    "loss_enh": {
+      "enabled": true,
+      "lambda": 0.1,
+      "decode_audio": true,
+      "stft_n_fft": 1024,
+      "stft_hop_length": 256,
+      "stft_win_length": 1024
+    },
+
+    "optimizer_configs": {
+      "diffusion": {
+        "optimizer": {
+          "type": "AdamW",
+          "config": {
+            "lr": 5e-5,
+            "betas": [0.9, 0.999],
+            "weight_decay": 1e-3
+          }
+        },
+        "scheduler": {
+          "type": "InverseLR",
+          "config": {
+            "inv_gamma": 1000000,
+            "power": 0.5,
+            "warmup": 0.99
+          }
+        }
+      }
+    },
+
+    "demo": {
+      "demo_every": 2000,
+      "demo_steps": 250,
+      "num_demos": 4,
+      "demo_cond": [
+        { "prompt": "A female person coughing age 20", "seconds_start": 0, "seconds_total": 5 },
+        { "prompt": "A male person coughing age 30", "seconds_start": 0, "seconds_total": 5 },
+        { "prompt": "A male person coughing age 80", "seconds_start": 0, "seconds_total": 5 },
+        { "prompt": "A female person coughing age 60", "seconds_start": 0, "seconds_total": 5 }
+      ],
+      "demo_cfg_scales": [4, 7]
+    }
+  }
+}
