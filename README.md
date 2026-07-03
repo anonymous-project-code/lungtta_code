@@ -71,6 +71,7 @@ The current files include:
 ```text
 cough_breath_dataset.json
 LICENSE.md
+eval method.ipynb
 main.sh
 model_config.json
 pre_encode.py
