@@ -61,7 +61,7 @@
 
     "memory": {
       "enabled": true,
-      "bank_path": "/iridisfs/scratch/mtm1g19/audioscratch/encoded/memory_bank.pt",
+      "bank_path": "/memory_bank.pt",
       "top_k": 4,
       "dropout": 0.2,
       "query_cond_id": "prompt"
