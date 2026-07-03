@@ -1,182 +1,151 @@
 ---
+
 language:
-- en
-library_name: stable-audio-tools
-license: other
-license_name: stable-audio-community
-license_link: LICENSE
-pipeline_tag: text-to-audio
-extra_gated_prompt: By clicking "Agree", you agree to the [License Agreement](https://huggingface.co/stabilityai/stable-audio-open-1.0/blob/main/LICENSE.md)
+
+* en
+  library_name: stable-audio-tools
+  license: other
+  license_name: stable-audio-community
+  license_link: LICENSE
+  pipeline_tag: text-to-audio
+  extra_gated_prompt: By clicking "Agree", you agree to the [License Agreement](https://huggingface.co/stabilityai/stable-audio-open-1.0/blob/main/LICENSE.md)
   and acknowledge Stability AI's [Privacy Policy](https://stability.ai/privacy-policy).
-extra_gated_fields:
+  extra_gated_fields:
   Name: text
   Email: text
   Country: country
   Organization or Affiliation: text
   Receive email updates and promotions on Stability AI products, services, and research?:
-    type: select
-    options:
-      - 'Yes'
-      - 'No'
+  type: select
+  options:
+  - 'Yes'
+  - 'No'
   What do you intend to use the model for?:
-    type: select
-    options:
-      - Research
-      - Personal use
-      - Creative Professional
-      - Startup
-      - Enterprise
+  type: select
+  options:
+  - Research
+  - Personal use
+  - Creative Professional
+  - Startup
+  - Enterprise
   I agree to the License Agreement and acknowledge Stability AI's Privacy Policy: checkbox
+
 ---
 
-# Stable Audio Open 1.0
+# LungTTA: Text-to-Audio Generation of Respiratory Sounds
 
-![Stable Audio Open logo](./stable_audio_light.png)
+This project builds on **Stable Audio Open 1.0** and the official **stable-audio-tools** codebase to support text-to-audio generation for respiratory health sounds.
 
-Please note: For commercial use, please refer to [https://stability.ai/license](https://stability.ai/license)
+Stable Audio Open 1.0 provides the original text-to-audio model, including the autoencoder, text-conditioning module, and transformer-based diffusion model. LungTTA adapts this pipeline toward respiratory audio generation, including cough, breathing, wheeze-like sounds, and phonation-related respiratory prompts.
+
+## Important Setup Note
+
+This repository does **not** replace the original Stable Audio Open 1.0 codebase.
+To run the LungTTA pipeline, users should first download and set up the official Stability AI repository:
+
+https://github.com/stability-ai/stable-audio-tools
+
+Users also need to access/download the Stable Audio Open 1.0 model from Hugging Face after agreeing to the model license:
+
+https://huggingface.co/stabilityai/stable-audio-open-1.0
+
+After setting up the original Stable Audio Open 1.0 environment, the LungTTA files in this project can be added on top of the original codebase.
+
+## LungTTA Pipeline
+
+The LungTTA pipeline follows the Stable Audio Open 1.0 framework but adapts it for respiratory sound generation.
+
+The main steps are:
+
+1. **Start from Stable Audio Open 1.0**
+   The original model and training/inference framework are taken from the official `stable-audio-tools` repository.
+
+2. **Add LungTTA respiratory audio data and prompts**
+   Respiratory audio samples are paired with text descriptions, such as cough type, breathing pattern, phonation sound, smoker/non-smoker information, age group, and respiratory condition information where available.
+
+3. **Use the LungTTA model configuration**
+   The model configuration file is the main configuration used to define the training and generation setup. This includes the audio settings, model structure, diffusion settings, and conditioning setup.
+
+4. **Run the pipeline on the HPC cluster**
+   The `main.sh` script is used to run the LungTTA pipeline on our high-performance computing cluster. This script launches the training or fine-tuning process using the selected model configuration.
+
+5. **Generate respiratory audio from text prompts**
+   After training or fine-tuning, the model can generate respiratory audio from prompts such as dry cough, wet cough, wheeze-like breathing, sustained vowels, and other respiratory sound descriptions.
+
+## Our Contributions
+
+The original Stable Audio Open 1.0 model and codebase are developed by Stability AI.
+Our contribution in LungTTA is the adaptation of this text-to-audio pipeline for respiratory health research.
+
+The main LungTTA contributions include:
+
+* adapting Stable Audio Open 1.0 for respiratory text-to-audio generation;
+* preparing a respiratory audio prompt format for cough, breathing, wheeze, and phonation sounds;
+* adding project-specific configuration files for respiratory audio generation;
+* running the training/fine-tuning pipeline on a high-performance computing cluster using `main.sh`;
+* supporting the generation of synthetic respiratory sounds for research use;
+* providing the foundation for future respiratory sound generation experiments and evaluation.
+
+## Code Availability
+
+This repository currently contains only a **snippet of the LungTTA code and configuration**.
+
+The full codebase is not yet uploaded. Additional scripts, configuration files, and documentation will be added gradually to this project until the complete LungTTA pipeline is available.
+
+Users should therefore treat the current release as a partial research-code release. To reproduce the full setup, users must first install the original Stable Audio Open 1.0 codebase from Stability AI and then add the LungTTA files provided in this repository.
+
+## Usage Overview
+
+First, clone and install the official Stable Audio tools repository:
+
+```bash
+git clone https://github.com/stability-ai/stable-audio-tools.git
+cd stable-audio-tools
+pip install -e .
+```
+
+Then download or access the Stable Audio Open 1.0 model from Hugging Face after accepting the license terms.
+
+After that, add the LungTTA project files into the working Stable Audio Open 1.0 environment.
+
+The HPC script can then be launched using:
+
+```bash
+bash main.sh
+```
+
+The `main.sh` script is designed for our high-performance computing cluster and may need to be adjusted for other computing environments.
 
 ## Model Description
-`Stable Audio Open 1.0` generates variable-length (up to 47s) stereo audio at 44.1kHz from text prompts. It comprises three components: an autoencoder that compresses waveforms into a manageable sequence length, a T5-based text embedding for text conditioning, and a transformer-based diffusion (DiT) model that operates in the latent space of the autoencoder.
 
-## Usage
+LungTTA uses Stable Audio Open 1.0 as the base text-to-audio generation framework. Stable Audio Open 1.0 generates variable-length stereo audio at 44.1 kHz from text prompts. It uses an autoencoder to compress audio waveforms, a T5-based text encoder for text conditioning, and a transformer-based diffusion model that operates in the latent space of the autoencoder.
 
-This model can be used with:
-1. the [`stable-audio-tools`](https://github.com/Stability-AI/stable-audio-tools) library
-2. the [`diffusers`](https://huggingface.co/docs/diffusers/main/en/index) library
+In LungTTA, this framework is adapted for respiratory sound generation rather than general music or sound-effect generation.
 
+## Intended Use
 
-### Using with `stable-audio-tools`
+LungTTA is intended for research and experimentation in respiratory acoustic AI, including:
 
-This model is made to be used with the [`stable-audio-tools`](https://github.com/Stability-AI/stable-audio-tools) library for inference, for example:
+* synthetic respiratory sound generation;
+* text-guided cough, breathing, and phonation sound generation;
+* data augmentation research for respiratory audio models;
+* exploration of generative AI methods for respiratory health and well-being research.
 
-```python
-import torch
-import torchaudio
-from einops import rearrange
-from stable_audio_tools import get_pretrained_model
-from stable_audio_tools.inference.generation import generate_diffusion_cond
+## Out-of-Scope Use
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+LungTTA should not be used as a medical diagnostic tool.
+Generated audio should not be treated as real patient data.
+The model should not be used in clinical decision-making without further validation, risk assessment, and ethical approval.
 
-# Download model
-model, model_config = get_pretrained_model("stabilityai/stable-audio-open-1.0")
-sample_rate = model_config["sample_rate"]
-sample_size = model_config["sample_size"]
+## Limitations
 
-model = model.to(device)
+* The current repository contains only a partial code release.
+* Users must install the official Stable Audio Open 1.0 codebase separately.
+* The `main.sh` script is configured for our high-performance computing cluster and may require changes for other systems.
+* Generated respiratory sounds are synthetic and may not fully represent real clinical respiratory sounds.
+* The model is intended for research use and not for direct clinical deployment.
 
-# Set up text and timing conditioning
-conditioning = [{
-    "prompt": "128 BPM tech house drum loop",
-    "seconds_start": 0, 
-    "seconds_total": 30
-}]
+## License
 
-# Generate stereo audio
-output = generate_diffusion_cond(
-    model,
-    steps=100,
-    cfg_scale=7,
-    conditioning=conditioning,
-    sample_size=sample_size,
-    sigma_min=0.3,
-    sigma_max=500,
-    sampler_type="dpmpp-3m-sde",
-    device=device
-)
-
-# Rearrange audio batch to a single sequence
-output = rearrange(output, "b d n -> d (b n)")
-
-# Peak normalize, clip, convert to int16, and save to file
-output = output.to(torch.float32).div(torch.max(torch.abs(output))).clamp(-1, 1).mul(32767).to(torch.int16).cpu()
-torchaudio.save("output.wav", output, sample_rate)
-```
-
-## Using with `diffusers`
-
-Make sure you upgrade to the latest version of diffusers: `pip install -U diffusers`. And then you can run:
-
-```py
-import torch
-import soundfile as sf
-from diffusers import StableAudioPipeline
-
-pipe = StableAudioPipeline.from_pretrained("stabilityai/stable-audio-open-1.0", torch_dtype=torch.float16)
-pipe = pipe.to("cuda")
-
-# define the prompts
-prompt = "The sound of a hammer hitting a wooden surface."
-negative_prompt = "Low quality."
-
-# set the seed for generator
-generator = torch.Generator("cuda").manual_seed(0)
-
-# run the generation
-audio = pipe(
-    prompt,
-    negative_prompt=negative_prompt,
-    num_inference_steps=200,
-    audio_end_in_s=10.0,
-    num_waveforms_per_prompt=3,
-    generator=generator,
-).audios
-
-output = audio[0].T.float().cpu().numpy()
-sf.write("hammer.wav", output, pipe.vae.sampling_rate)
-
-```
-Refer to the [documentation](https://huggingface.co/docs/diffusers/main/en/index) for more details on optimization and usage.
-
-
-
-
-## Model Details
-* **Model type**: `Stable Audio Open 1.0` is a latent diffusion model based on a transformer architecture.
-* **Language(s)**: English
-* **License**: [Stability AI Community License](https://huggingface.co/stabilityai/stable-audio-open-1.0/blob/main/LICENSE.md).
-* **Commercial License**: to use this model commercially, please refer to [https://stability.ai/license](https://stability.ai/license)
-* **Research Paper**: [https://arxiv.org/abs/2407.14358](https://arxiv.org/abs/2407.14358)
-
-## Training dataset
-
-### Datasets Used
-Our dataset consists of 486492 audio recordings, where 472618 are from Freesound and 13874 are from the Free Music Archive (FMA). All audio files are licensed under CC0, CC BY, or CC Sampling+. This data is used to train our autoencoder and DiT. We use a publicly available pre-trained T5 model ([t5-base](https://huggingface.co/google-t5/t5-base)) for text conditioning.
-
-### Attribution
-Attribution for all audio recordings used to train Stable Audio Open 1.0 can be found on our [attribution page](https://info.stability.ai/attributions).
-
-### Mitigations
-We conducted an in-depth analysis to ensure no unauthorized copyrighted music was present in our training data before we began training.
-
-To that end, we first identified music samples in Freesound using the [PANNs](https://github.com/qiuqiangkong/audioset_tagging_cnn) music classifier based on AudioSet classes. The identified music samples had at least 30 seconds of music that was predicted to belong to a music-related class with a threshold of 0.15 (PANNs output probabilities range from 0 to 1). This threshold was determined by classifying known music examples from FMA and ensuring no false negatives were present. 
-
-The identified music samples were sent to Audible Magic’s identification services, a trusted content detection company, to ensure the absence of copyrighted music. Audible Magic flagged suspected copyrighted music, which we subsequently removed before training on the dataset. The majority of the removed content was field recordings in which copyrighted music was playing in the background. Following this procedure, we were left with 266324 CC0, 194840 CC-BY, and 11454 CC Sampling+ audio recordings.
-
-We also conducted an in-depth analysis to ensure no copyrighted content was present in FMA's subset. In this case, the procedure was slightly different because the FMA subset consists of music signals. We did a metadata search against a large database of copyrighted music (https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset) and flagged any potential match. The flagged content was reviewed individually by humans. After this process, we ended up with 8967 CC-BY and 4907 CC0 tracks.
-
-
-## Use and Limitations
-
-
-### Intended Use
-The primary use of Stable Audio Open is research and experimentation on AI-based music and audio generation, including:
-
-- Research efforts to better understand the limitations of generative models and further improve the state of science.
-- Generation of music and audio guided by text to explore current abilities of generative AI models by machine learning practitioners and artists.
-
-
-### Out-of-Scope Use Cases
-The model should not be used on downstream applications without further risk evaluation and mitigation. The model should not be used to intentionally create or disseminate audio or music pieces that create hostile or alienating environments for people.
-
-
-### Limitations
-- The model is not able to generate realistic vocals.
-- The model has been trained with English descriptions and will not perform as well in other languages.
-- The model does not perform equally well for all music styles and cultures.
-- The model is better at generating sound effects and field recordings than music.
-- It is sometimes difficult to assess what types of text descriptions provide the best generations. Prompt engineering may be required to obtain satisfying results.
-
-
-### Biases
-The source of data is potentially lacking diversity and all cultures are not equally represented in the dataset. The model may not perform equally well on the wide variety of music genres and sound effects that exist. The generated samples from the model will reflect the biases from the training data.
+This project builds on Stable Audio Open 1.0 and follows the relevant Stability AI license terms.
+Users must review and agree to the Stable Audio Open 1.0 license before using the model.
